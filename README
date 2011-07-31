@@ -1,9 +1,45 @@
 The development of web-services are in progress.
 To start do a
 
-Step 1: Start MongoDB server by typing ./mongod
+Step 1: Start MongoDB server by typing ./mongod in the bin of MongoDB directory
 
 Step 2: node server.js
 
 Step 3: Register a website by using registration.html
+
+Step 4: Open sample.html and click on various ads to track them. There informations are stored in a document generated dynamically.
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------
+To check the database
+-------------------------------------------------------------------------------------------
+Step 1: Go to console of MongoDB by typing ./mongo in the bin of MongoDB directory
+
+Step 2: Fire following commands on the prompt of MongoDB console in order 
+
+					use trackRecords;
+					db.domains.find();
+
+			This lists all the registered domain and their unique automatically generated IDs
+			
+			Sample output would be as follows
+
+						{ "name" : "www.gmail.com", "_id" : ObjectId("2952344ef6382d6301000000") }
+						{ "name" : "www.ymail.com", "_id" : ObjectId("a794344e8a9b6f4e00000000") }
+						{ "name" : "www.yahoo.com", "_id" : ObjectId("a35d354e03cfc73b00000000") }
+						{ "name" : "www.rediff.com", "_id" : ObjectId("b15d354eda24f33d00000000") }
+
+
+			To find details of "hits" on any of the registered domain search in the document hit_<id>.
+			Example: to find details of hits on www.gmail.com fire the following commands on MongoDB console
+				
+					db.hit_2952344ef6382d6301000000.find();
+
+			After a predefined period (in server_modules.js TIME_SLICE) any new tracks are inserted as new entry the document.
+
 
