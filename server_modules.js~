@@ -124,7 +124,9 @@ exports.register = function(options, callback) {
 		db.collection('domains', function(err, collection) {
 			collection.insert({"name": name});
 			db.close();
-			callback(null, 'Domain Added');
+			console.log(options.name + ' Registered');
+			callback(null, options);
+			
 		});
 	});
 
@@ -145,7 +147,6 @@ exports.trackHits = function(options, callback) {
 		db.collection('domains', function(err, collection) {
 			collection.find({"name":options.domain}, function(err, cursor) { //Getting the ID from the Domains Document
 				cursor.nextObject(function(err, tuple) {
-					console.log(tuple);
 					if(tuple != null) {
 					var hitCollection = 'hit_' + tuple._id; //Constructing the name of Hits document
 						db.collection(hitCollection, function(err, collection) {
@@ -155,7 +156,7 @@ exports.trackHits = function(options, callback) {
 									var trackField = options.trackField;
 									if(n == 0) { //Insert
 										collection.insert({trackField:trackField, count:1, 'timestamp':now.getTime()});
-										console.log('New Insert');
+										console.log(options.domain + ':' + options.trackField +  ' New Insert\n');
 									} else { //Update
 										var timestamps = []	
 										cursor.toArray(function(err, items) {
@@ -163,14 +164,12 @@ exports.trackHits = function(options, callback) {
 											timestamps.push(items[i].timestamp);
 										}
 										var max = Math.max.apply(0, timestamps);
-										console.log(max);
-										console.log(now.getTime() - max);
 										if((now.getTime() - max) < TIME_SLICE) { //Update the existing value
 											collection.update({timestamp:max}, {$inc: {count: 1}});
-											console.log('Updated Existing');
+											console.log(options.domain + ':' + options.trackField +  ' Updated Existing\n');
 										} else { //Insert a new row
 											collection.insert({trackField:trackField, count:1, 'timestamp':now.getTime()});
-											console.log('Inserted after Time-Slice');
+											console.log(options.domain + ':' + options.trackField +  ' Inserted after Time-Slice\n');
 										}
 
 										});

@@ -1,0 +1,9 @@
+The development of web-services are in progress.
+To start do a
+
+Step 1: Start MongoDB server by typing ./mongod
+
+Step 2: node server.js
+
+Step 3: Register a website by using registration.html
+
