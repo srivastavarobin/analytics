@@ -156,6 +156,7 @@ exports.trackHits = function(options, callback) {
 									if(n == 0) { //Insert
 										collection.insert({trackField:trackField, count:1, 'timestamp':now.getTime()});
 										console.log(options.domain + ':' + options.trackField +  ' New Insert\n');
+										db.close();
 									} else { //Update
 										var timestamps = []	
 										cursor.toArray(function(err, items) {
@@ -170,7 +171,7 @@ exports.trackHits = function(options, callback) {
 											collection.insert({trackField:trackField, count:1, 'timestamp':now.getTime()});
 											console.log(options.domain + ':' + options.trackField +  ' Inserted after Time-Slice\n');
 										}
-
+										db.close();
 										});
 
 									}
@@ -197,6 +198,52 @@ exports.trackHits.schema = {
 	}
 };
 
+exports.getDomains = function(options, callback) {
+ 	var db = new Db('trackRecords', new Server(host, port, {}), {native_parser: true});
+	
+	db.open(function(err, db) {
+		db.collection('domains', function(err, collection) {
+			collection.find(function(err, cursor) {
+				cursor.toArray(function(err, items) {
+					db.close();
+					callback(null, items);
+				});
+			});
+		});
+	});
+};
+
+exports.getDomains.description = "Returns all the domains";
+
+exports.getHits = function(options, callback) {
+	var db = new Db('trackRecords', new Server(host, port, {}), {native_parser: true});
+	db.open(function(err, b) {
+		db.collection('domains', function(err, collection) {
+			collection.find({"name":options.domain}, function(err, cursor) { //Getting the ID from the Domains Document
+				cursor.nextObject(function(err, tuple) {
+					if(tuple != null) {
+					var hitCollection = 'hit_' + tuple._id; //Constructing the name of Hits document
+						db.collection(hitCollection, function(err, collection) {
+							collection.find(function(err, cursor) {
+								cursor.toArray(function(err, items) {
+									callback(null, items);
+								});
+							});
+						});
+					}
+				});
+			});
+		});
+	});
+};
+
+exports.getHits.description = "Return the Hit data for a registered domain";
+exports.getHits.schema = {
+	domain: {
+		type: 'string',
+		optional: false
+	}
+};
 
 /*setInterval(function() {
 	console.log('hello');

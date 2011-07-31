@@ -1,16 +1,31 @@
-The development of web-services are in progress.
-To start do a
+Steps to use:
 
 Step 1: Start MongoDB server by typing ./mongod in the bin of MongoDB directory
 
 Step 2: node server.js
 
-Step 3: Register a website by using registration.html
+Step 3: Register a domain (say www.gmail.com) by using registration.html
 
-Step 4: Open sample.html and click on various ads to track them. There informations are stored in a document generated dynamically.
+Step 4: To track any of the event include track.js as source of JavaScript in the HTML page and call the function track with input argument as
+				the registered domain and the field name to track.
+
+				track(domain, trackField);
+
+
+				sample.html contains various buttons which are being tracked for hits under the domain www.gmail.com
+				There information is stored in a document generated dynamically.
+
+Step 5: To see the hit for any website open the following URL and pass the registered domain as the parameter
+				
+				http://localhost:8080/getHits?domain=www.gmail.com
 
 
 
+-------------------------------------------------------------------------------------------
+To see the list of web-services
+-------------------------------------------------------------------------------------------
+After Step 2 above go in the browser window and open
+http://localhost:8080/docs
 
 
 
@@ -40,6 +55,6 @@ Step 2: Fire following commands on the prompt of MongoDB console in order
 				
 					db.hit_2952344ef6382d6301000000.find();
 
-			After a predefined period (in server_modules.js TIME_SLICE) any new tracks are inserted as new entry the document.
+			After a predefined period (in server_modules.js TIME_SLICE) any new tracks are inserted as new entry in the document.
 
 
