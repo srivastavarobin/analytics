@@ -227,6 +227,7 @@ exports.getHits = function(options, callback) {
 							collection.find(function(err, cursor) {
 								cursor.toArray(function(err, items) {
 									callback(null, items);
+									db.close();
 								});
 							});
 						});
@@ -244,6 +245,73 @@ exports.getHits.schema = {
 		optional: false
 	}
 };
+
+exports.savePattern = function(options, callback) {
+	var db = new Db('trackRecords', new Server(host, port, {}), {native_parser: true});
+	db.open(function(err, b) {
+		db.collection('domains', function(err, collection) {
+			collection.find({"name":options.domain}, function(err, cursor) { //Getting the ID from the Domains Document
+				cursor.nextObject(function(err, tuple) {
+					if(tuple != null) {
+					var patternCollection = 'pattern_' + tuple._id; //Constructing the name of Hits document
+						db.collection(patternCollection, function(err, collection) {
+							var now = new Date();
+							collection.insert({pattern: options.pattern, timestamp: now.getTime()});
+							db.close();
+							console.log('Pattern Saved for: ' + options.domain);
+							callback(null, options);
+						});
+					}
+				});
+			});
+		});
+	});
+	
+};
+exports.savePattern.description = "Saves pattern of a domain along with timestamp";
+exports.savePattern.schema = {
+	domain: {
+		type: 'string',
+		optional: false
+	},
+	pattern: {
+		type: 'string',
+		optional: false
+	}
+};
+
+
+exports.getPattern = function(options, callback) {
+	var db = new Db('trackRecords', new Server(host, port, {}), {native_parser: true});
+	db.open(function(err, b) {
+		db.collection('domains', function(err, collection) {
+			collection.find({"name":options.domain}, function(err, cursor) { //Getting the ID from the Domains Document
+				cursor.nextObject(function(err, tuple) {
+					if(tuple != null) {
+					var patternCollection = 'pattern_' + tuple._id; //Constructing the name of Hits document
+						db.collection(patternCollection, function(err, collection) {
+							collection.find(function(err, cursor) {
+								cursor.toArray(function(err, items) {
+									callback(null, items);
+									db.close();
+								});
+							});
+						});
+					}
+				});
+			});
+		});
+	});
+};
+
+exports.getPattern.description = "Return the pattern data for a registered domain";
+exports.getPattern.schema = {
+	domain: {
+		type: 'string',
+		optional: false
+	}
+};
+
 
 /*setInterval(function() {
 	console.log('hello');

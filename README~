@@ -1,4 +1,4 @@
-To start do a
+Steps to use:
 
 Step 1: Start MongoDB server by typing ./mongod in the bin of MongoDB directory
 
@@ -12,8 +12,21 @@ Step 4: To track any of the event include track.js as source of JavaScript in th
 				track(domain, trackField);
 
 
-				sample.html contains various buttons which are being tracked for hits under the domain www.gmail.com
+				sample.html contains various buttons which are being tracked for hits under the domain www.gmail.com. Perform various number of hits on Ad buttons
 				There information is stored in a document generated dynamically.
+
+Step 5: To see the hit for any website open the following URL and pass the registered domain as the parameter
+				
+				http://localhost:8080/getHits?domain=www.gmail.com
+
+
+Step 6: It also tracks the pattern at the end of navigation. To check the pattern in the above case open the following URL
+
+				http://localhost:8080/getPattern?domain=www.gmail.com
+
+Step x: To check all the registered domain open the following URL
+
+				http://localhost:8080/getDomains
 
 
 
@@ -52,5 +65,11 @@ Step 2: Fire following commands on the prompt of MongoDB console in order
 					db.hit_2952344ef6382d6301000000.find();
 
 			After a predefined period (in server_modules.js TIME_SLICE) any new tracks are inserted as new entry in the document.
+
+
+			To find details of "patterns" on any of the registered domain search in the document pattern_<id>
+			Example: to find details of patterns on www.gmail.com fire the following commands on MongoDB console
+				
+					db.pattern_2952344ef6382d6301000000.find();
 
 
